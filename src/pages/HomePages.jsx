@@ -33,8 +33,16 @@ const HomePages = () => {
 
   const onChangeSearch = (e) => {
     setSearchValue(e.target.value);
-    searchData(e.target.value);
   };
+
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+        searchData(searchValue);
+    }, 2000)
+  
+    return () => clearTimeout(delayDebounceFn)
+  }, [searchValue])
+  
 
   useEffect(() => {
     fetchData();
