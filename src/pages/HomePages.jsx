@@ -8,18 +8,28 @@ import { fetchDataCall, searchDataCall } from "../services/product.service";
 const HomePages = () => {
   const [dataProducts, setDataProducts] = useState([]);
   const [searchValue, setSearchValue] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const fetchData = async () => {
+    setIsLoading(true);
     const data = await fetchDataCall();
-    setDataProducts(data.data.products);
+    if (data.data.products) {
+      setIsLoading(false);
+      setDataProducts(data.data.products);
+    }
     // axios.get("https://dummyjson.com/products").then((res) => {
     //   setDataProducts(res.data.products);
     // });
   };
 
   const searchData = async (query) => {
+    setIsLoading(true);
     const data = await searchDataCall(query);
+    if (data.data.products) {
+      setIsLoading(false);
+      setDataProducts(data.data.products);
+    }
     setDataProducts(data.data.products);
-  }
+  };
 
   const onChangeSearch = (e) => {
     setSearchValue(e.target.value);
@@ -29,7 +39,6 @@ const HomePages = () => {
   useEffect(() => {
     fetchData();
   }, []);
-
 
   return (
     <>
@@ -52,6 +61,10 @@ const HomePages = () => {
         </div>
 
         <div className="mt-10">
+          {isLoading && <p className="text-center">Loading ...</p>}
+          {!isLoading && dataProducts.length === 0 && (
+            <p className="text-center">Data Not Found</p>
+          )}
           <div className="grid grid-cols-4 gap-2">
             {dataProducts.map((item) => (
               <Card key={item.id} item={item} />
